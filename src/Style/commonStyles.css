@@ -1,32 +1,54 @@
+/* Variables CSS globales */
 :root {
-  --primary-color: #6a1b9a; /* اللون البنفسجي الرئيسي */
-  --secondary-color: #9c27b0; /* اللون البنفسجي الثانوي */
-  --background-color: #f3e5f5; /* لون الخلفية الفاتح */
-  --text-color: #4a148c; /* لون النصوص الداكن */
-  --button-color: #ab47bc; /* لون الأزرار */
-  --button-hover-color: #8e24aa; /* لون الأزرار عند التمرير */
+  --primary-color: #6a1b9a; /* Couleur principale (violet) */
+  --secondary-color: #9c27b0; /* Couleur secondaire (violet clair) */
+  --background-color: #f3e5f5; /* Couleur de fond */
+  --text-color: #4a148c; /* Couleur du texte */
+  --button-color: #ab47bc; /* Couleur des boutons */
+  --button-hover-color: #8e24aa; /* Couleur des boutons au survol */
+  --navbar-width: 280px; /* Largeur de la barre latérale */
+  --navbar-collapsed-width: 100px; /* Largeur réduite de la barre latérale */
+  --navbar-background: #1E40AF; /* Couleur de fond de la barre latérale */
+  --navbar-text-color: #FFFFFF; /* Couleur du texte de la barre latérale */
+  --navbar-text-hover-color: #93C5FD; /* Couleur du texte au survol */
+  --navbar-button-bg: transparent; /* Fond des boutons de la barre latérale */
+  --navbar-button-hover-bg: rgba(147, 197, 253, 0.2); /* Fond des boutons au survol */
+  --navbar-shadow: 10px 0 30px rgba(0, 0, 0, 0.2); /* Ombre de la barre latérale */
+  --transition-speed: 0.3s; /* Vitesse des transitions */
+  --border-radius: 12px; /* Rayon des bordures */
+  --profile-image-size: 90px; /* Taille de l'image de profil */
+  --navbar-border-color: rgba(255, 255, 255, 0.2); /* Couleur de la bordure de la barre latérale */
+  --glass-blur: blur(15px); /* Effet de flou pour le verre */
 }
 
+/* Styles de base pour le body */
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
+/* Conteneur principal */
 .container {
   display: flex;
   height: 100vh;
 }
 
+/* Contenu principal */
 .main-content {
   flex: 1;
-  padding: 10vh;
+  padding: 95px;
   background-color: white;
-  margin-left: 300px;
+  margin-left: var(--navbar-width);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: margin-left var(--transition-speed) ease-in-out;
+  border-radius: 20px;
 }
 
+/* Styles pour les formulaires */
 .form-container {
   max-width: 500px;
   margin: 0 auto;
@@ -35,11 +57,11 @@ body {
 .form-container input,
 .form-container select,
 .form-container button {
-  width: 10%;
-  padding: 10px;
+  width: 100%;
+  padding: 20px;
   margin-bottom: 10px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
 }
 
 .form-container button {
@@ -47,12 +69,14 @@ body {
   color: white;
   border: none;
   cursor: pointer;
+  transition: background-color var(--transition-speed) ease;
 }
 
 .form-container button:hover {
   background-color: var(--button-hover-color);
 }
 
+/* Styles pour les tables */
 .table-container {
   margin-top: 40px;
 }
@@ -83,23 +107,134 @@ table tr:hover {
   background-color: #f1f1f1;
 }
 
-.profile {
-  text-align: center;
-  margin-bottom: 200px;
+/* Styles pour les boutons */
+button {
+  padding: 20px 20px;
+  background-color: var(--button-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color var(--transition-speed) ease;
 }
 
-.profile-pic {
-  width: 80px;
-  height: 80px;
+button:hover {
+  background-color: var(--button-hover-color);
+}
+
+/* Styles pour les images de profil */
+.profile-image {
+  width: var(--profile-image-size);
+  height: var(--profile-image-size);
   border-radius: 50%;
-  margin-bottom: 10px;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid var(--navbar-text-hover-color);
+  box-shadow: 0px 0px 20px rgba(147, 197, 253, 0.4);
+  transition: transform 0.3s ease-in-out;
 }
 
-.logout-button {
-  margin-top: 20px;
-  background-color: #ff4444; /* Rouge pour le bouton de déconnexion */
+.profile-image:hover {
+  transform: scale(1.05);
 }
 
-.logout-button:hover {
-  background-color: #cc0000; /* Rouge plus foncé au survol */
+/* Styles pour les sections de profil */
+.profile-section {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-speed) ease;
+}
+
+.profile-section:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(147, 197, 253, 0.3);
+}
+
+/* Styles pour la barre latérale */
+.navigation {
+  display: flex;
+  flex-direction: column;
+  width: var(--navbar-width);
+  background: var(--navbar-background);
+  backdrop-filter: var(--glass-blur);
+  padding: 30px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-shadow: var(--navbar-shadow);
+  transition: width var(--transition-speed) ease-in-out;
+  overflow-y: auto;
+  border-right: 1px solid var(--navbar-border-color);
+  margin-right: 20px; /* Espace entre la Navbar et le contenu */
+}
+
+.navigation.closed {
+  width: var(--navbar-collapsed-width);
+  padding: 30px 12px;
+}
+
+.navigation h1 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--navbar-text-color);
+}
+
+.navigation ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px; /* Espace entre le titre et les boutons */
+}
+
+.navigation ul li {
+  margin-bottom: 10px; /* Espace entre les boutons */
+}
+
+.navigation ul li a {
+  text-decoration: none;
+  color: var(--navbar-text-color);
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: var(--border-radius);
+  transition: all var(--transition-speed) ease;
+}
+
+.navigation ul li a:hover {
+  background-color: var(--navbar-button-hover-bg);
+  color: var(--navbar-text-hover-color);
+  transform: translateX(8px);
+}
+
+.navigation ul li.active a {
+  background-color: rgba(147, 197, 253, 0.2);
+  color: var(--navbar-text-hover-color);
+  transform: translateX(8px);
+}
+
+/* Bouton pour basculer la barre latérale */
+.sidebar-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background-color: var(--navbar-background);
+  color: var(--navbar-text-color);
+  border: 1px solid var(--navbar-border-color);
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.2);
+  transition: all var(--transition-speed) ease;
+  z-index: 1000;
+}
+
+.sidebar-toggle:hover {
+  background-color: var(--navbar-button-hover-bg);
+  color: var(--navbar-text-hover-color);
+  transform: scale(1.2);
 }

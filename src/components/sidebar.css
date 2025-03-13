@@ -1,108 +1,156 @@
-@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
-
-* {
-  font-family: "Ubuntu", sans-serif;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* Variables CSS */
 :root {
-  --blue: #2a2185;
-  --white: #fff;
-  --gray: #f5f5f5;
-  --black1: #222;
-  --black2: #999;
+  --navbar-width: 280px;
+  --navbar-collapsed-width: 100px;
+  --navbar-background: #1E40AF; /* Bleu foncé */
+  --navbar-button-bg: transparent;
+  --navbar-button-hover-bg: rgba(147, 197, 253, 0.2); /* Bleu clair avec transparence */
+  --navbar-text-color: #FFFFFF; /* Texte blanc */
+  --navbar-text-hover-color: #93C5FD; /* Bleu clair pour les survols */
+  --navbar-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+  --transition-speed: 0.3s;
+  --border-radius: 12px;
+  --profile-image-size: 90px;
+  --navbar-border-color: rgba(255, 255, 255, 0.2);
+  --glass-blur: blur(15px);
 }
 
-body {
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-.container {
-  position: relative;
-  width: 100%;
-}
-
-/* Sidebar Styles */
-.navigation {
-  position: fixed;
-  width: 300px;
-  height: 100%;
-  background: var(--blue);
-  border-left: 10px solid var(--blue);
-  transition: 0.5s;
-  overflow: hidden;
-}
-
-.navigation ul {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
-
-.navigation ul li {
-  position: relative;
-  width: 100%;
-  list-style: none;
-  border-top-left-radius: 30px;
-  border-bottom-left-radius: 30px;
-  margin-bottom: 20px; /* Ajout d'un espace entre les fonctionnalités */
-}
-
-.navigation ul li:hover,
-.navigation ul li.active {
-  background-color: var(--white);
-}
-
-.navigation ul li a {
-  position: relative;
-  display: block;
-  width: 100%;
+/* Styles de base pour la barre de navigation */
+nav {
   display: flex;
-  text-decoration: none;
-  color: var(--white);
-  padding: 10px;
+  flex-direction: column;
+  width: var(--navbar-width);
+  background: var(--navbar-background);
+  backdrop-filter: var(--glass-blur);
+  padding: 30px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-shadow: var(--navbar-shadow);
+  transition: width var(--transition-speed) ease-in-out;
+  overflow-y: auto;
+  border-right: 1px solid var(--navbar-border-color);
+  margin-right: 20px; /* Espace entre la Navbar et le contenu */
 }
 
-.navigation ul li:hover a,
-.navigation ul li.active a {
-  color: var(--blue);
+/* Styles pour la barre de navigation réduite */
+nav.collapsed {
+  width: var(--navbar-collapsed-width);
+  padding: 30px 12px;
 }
 
-.navigation ul li.active {
-  background: var(--white);
-}
-
-.navigation ul li.active a {
-  color: var(--black1);
-}
-
-/* Cylindrical Effect */
-.navigation ul li:hover a::before,
-.navigation ul li.active a::before {
-  content: "";
+/* Bouton de bascule pour replier/déplier la barre */
+.toggle-button {
   position: absolute;
-  right: 0;
-  top: -50px;
-  width: 50px;
-  height: 50px;
-  background-color: transparent;
+  right: -50px;
+  top: 20px;
+  background-color: var(--navbar-background);
+  color: var(--navbar-text-color);
+  border: 1px solid var(--navbar-border-color);
+  padding: 12px;
+  cursor: pointer;
   border-radius: 50%;
-  box-shadow: 35px 35px 0 10px var(--white);
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.2);
+  transition: all var(--transition-speed) ease;
 }
 
-.navigation ul li:hover a::after,
-.navigation ul li.active a::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: -50px;
-  width: 50px;
-  height: 50px;
-  background-color: transparent;
+.toggle-button:hover {
+  background-color: var(--navbar-button-hover-bg);
+  color: var(--navbar-text-hover-color);
+  transform: scale(1.2);
+}
+
+/* Styles pour l'image de profil */
+.profile-image {
+  width: var(--profile-image-size);
+  height: var(--profile-image-size);
   border-radius: 50%;
-  box-shadow: 35px -35px 0 10px var(--white);
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid var(--navbar-text-hover-color);
+  box-shadow: 0px 0px 20px rgba(147, 197, 253, 0.4);
+  transition: transform 0.3s ease-in-out;
+}
+
+.profile-image:hover {
+  transform: scale(1.05);
+}
+
+/* Styles pour les boutons de navigation */
+nav button {
+  background-color: var(--navbar-button-bg);
+  color: var(--navbar-text-color);
+  border: none;
+  padding: 14px 20px;
+  margin: 10px 0;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  font-weight: 500;
+  transition: all var(--transition-speed) ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Effet de survol pour les boutons */
+nav button:hover {
+  background-color: var(--navbar-button-hover-bg);
+  color: var(--navbar-text-hover-color);
+  transform: translateX(8px);
+}
+
+/* Styles pour le bouton actif */
+nav button.active {
+  background-color: rgba(147, 197, 253, 0.2);
+  color: var(--navbar-text-hover-color);
+  transform: translateX(8px);
+}
+
+/* Transition pour le texte lors du repli */
+nav.collapsed button span {
+  opacity: 0;
+  transition: opacity var(--transition-speed) ease;
+}
+
+nav button span {
+  opacity: 1;
+  transition: opacity var(--transition-speed) ease;
+}
+
+/* Styles pour la section du profil */
+.profile-section {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-speed) ease;
+}
+
+.profile-section:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(147, 197, 253, 0.3);
+}
+
+/* Styles pour le titre de la barre latérale */
+nav h1 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--navbar-text-color);
+}
+
+/* Espacement entre les boutons */
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px; /* Espace entre le titre et les boutons */
+}
+
+nav ul li {
+  margin-bottom: 10px; /* Espace entre les boutons */
 }

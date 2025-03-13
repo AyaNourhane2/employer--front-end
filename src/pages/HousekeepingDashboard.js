@@ -1,308 +1,363 @@
 import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
-import "../Style/commonStyles.css";
+import "../Style/commonStyles.css"; // Assurez-vous d'importer globalStyles.css
 
 const HousekeepingDashboard = () => {
-  // تحديد الزر النشط
-  const [activeButton, setActiveButton] = useState("Chambres");
+  // État pour gérer le bouton actif dans la barre latérale
+  const [activeButton, setActiveButton] = useState("Tâches de Ménage");
 
-  // قائمة الغرف
-  const [rooms, setRooms] = useState([]);
+  // États pour les données
+  const [tasks, setTasks] = useState([
+    { id: 1, room: "101", status: "à nettoyer", priority: "normal" },
+    { id: 2, room: "102", status: "en cours de nettoyage", priority: "VIP" },
+    { id: 3, room: "103", status: "propre", priority: "normal" },
+  ]);
 
-  // قائمة المنتجات
-  const [products, setProducts] = useState([]);
+  const [staff, setStaff] = useState([
+    { id: 1, name: "Jean Dupont", status: "présent", performance: "excellent" },
+    { id: 2, name: "Marie Curie", status: "absent", performance: "bon" },
+  ]);
 
-  // قائمة الإشعارات
-  const [notifications, setNotifications] = useState([]);
+  const [inventory, setInventory] = useState([
+    { id: 1, item: "Serviettes", quantity: 50, needsRestock: false },
+    { id: 2, item: "Détergent", quantity: 10, needsRestock: true },
+  ]);
 
-  // بيانات النموذج لإضافة غرفة جديدة
-  const [roomFormData, setRoomFormData] = useState({
-    roomNumber: "",
-    status: "à nettoyer", // حالة الغرفة (à nettoyer, en maintenance, nettoyée)
-  });
+  const [specialRequests, setSpecialRequests] = useState([
+    { id: 1, room: "101", request: "Nettoyage urgent", status: "en attente" },
+  ]);
 
-  // بيانات النموذج لإضافة منتج جديد
-  const [productFormData, setProductFormData] = useState({
-    productName: "",
-    quantity: "",
-  });
+  const [qualityChecks, setQualityChecks] = useState([
+    { id: 1, room: "101", status: "passé", issues: "Aucun" },
+    { id: 2, room: "102", status: "en attente", issues: "À vérifier" },
+  ]);
 
-  // بيانات النموذج لإضافة إشعار جديد
-  const [notificationFormData, setNotificationFormData] = useState({
-    message: "",
-    priority: "normal", // أولوية الإشعار (normal, urgent)
-  });
+  const [invoices, setInvoices] = useState([]);
+  const [audits, setAudits] = useState([]);
 
-  // الأزرار المتاحة في الشريط الجانبي
-  const buttons = ["Chambres", "Notifications", "Produits", "Coordination"];
-
-  // عند النقر على زر معين، يتم تغييره إلى الزر النشط
-  const handleButtonClick = (button) => setActiveButton(button);
-
-  // تحديث بيانات النموذج عند الكتابة في حقول الإدخال
-  const handleInputChange = (e, formData, setFormData) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  // إضافة غرفة جديدة إلى قائمة الغرف
-  const handleAddRoom = () => {
-    if (roomFormData.roomNumber) {
-      setRooms([...rooms, roomFormData]);
-      setRoomFormData({ roomNumber: "", status: "à nettoyer" });
-    } else {
-      alert("Veuillez remplir le numéro de chambre.");
-    }
-  };
-
-  // تحديث حالة الغرفة
-  const handleUpdateRoomStatus = (index, newStatus) => {
-    const updatedRooms = rooms.map((room, i) =>
-      i === index ? { ...room, status: newStatus } : room
+  // Fonctions pour mettre à jour les données
+  const updateTaskStatus = (taskId, newStatus) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === taskId ? { ...task, status: newStatus } : task
+      )
     );
-    setRooms(updatedRooms);
   };
 
-  // حذف غرفة من القائمة
-  const handleDeleteRoom = (index) => {
-    const updatedRooms = rooms.filter((_, i) => i !== index);
-    setRooms(updatedRooms);
+  const addTask = (room, priority) => {
+    const newTask = {
+      id: tasks.length + 1,
+      room,
+      status: "à nettoyer",
+      priority,
+    };
+    setTasks([...tasks, newTask]);
   };
 
-  // إضافة منتج جديد إلى قائمة المنتجات
-  const handleAddProduct = () => {
-    if (productFormData.productName && productFormData.quantity) {
-      setProducts([...products, productFormData]);
-      setProductFormData({ productName: "", quantity: "" });
-    } else {
-      alert("Veuillez remplir tous les champs.");
-    }
+  const updateInventory = (itemId, newQuantity) => {
+    setInventory(
+      inventory.map((item) =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      )
+    );
   };
 
-  // حذف منتج من القائمة
-  const handleDeleteProduct = (index) => {
-    const updatedProducts = products.filter((_, i) => i !== index);
-    setProducts(updatedProducts);
+  const addSpecialRequest = (room, request) => {
+    const newRequest = {
+      id: specialRequests.length + 1,
+      room,
+      request,
+      status: "en attente",
+    };
+    setSpecialRequests([...specialRequests, newRequest]);
   };
 
-  // إضافة إشعار جديد إلى قائمة الإشعارات
-  const handleAddNotification = () => {
-    if (notificationFormData.message) {
-      setNotifications([...notifications, notificationFormData]);
-      setNotificationFormData({ message: "", priority: "normal" });
-    } else {
-      alert("Veuillez remplir le message.");
-    }
+  const updateQualityCheck = (checkId, newStatus, issues) => {
+    setQualityChecks(
+      qualityChecks.map((check) =>
+        check.id === checkId ? { ...check, status: newStatus, issues } : check
+      )
+    );
   };
 
-  // حذف إشعار من القائمة
-  const handleDeleteNotification = (index) => {
-    const updatedNotifications = notifications.filter((_, i) => i !== index);
-    setNotifications(updatedNotifications);
+  const addInvoice = (clientName, amount) => {
+    const newInvoice = {
+      id: invoices.length + 1,
+      clientName,
+      amount,
+      date: new Date().toLocaleDateString(),
+    };
+    setInvoices([...invoices, newInvoice]);
+  };
+
+  const addAudit = (description, status) => {
+    const newAudit = {
+      id: audits.length + 1,
+      description,
+      status,
+      date: new Date().toLocaleDateString(),
+    };
+    setAudits([...audits, newAudit]);
+  };
+
+  const addEmployee = (name, status, performance) => {
+    const newEmployee = {
+      id: staff.length + 1,
+      name,
+      status,
+      performance,
+    };
+    setStaff([...staff, newEmployee]);
+  };
+
+  const addProduct = (item, quantity, needsRestock) => {
+    const newProduct = {
+      id: inventory.length + 1,
+      item,
+      quantity,
+      needsRestock,
+    };
+    setInventory([...inventory, newProduct]);
+  };
+
+  // Boutons disponibles dans la barre latérale
+  const buttons = [
+    "Tâches de Ménage",
+    "Suivi du Personnel",
+    "Gestion des Stocks",
+    "Demandes Spéciales",
+    "Contrôle Qualité",
+  ];
+
+  // Fonction pour gérer le clic sur un bouton
+  const handleButtonClick = (button) => {
+    setActiveButton(button);
   };
 
   return (
     <div className="container">
-      {/* شريط جانبي للتنقل بين الوظائف */}
+      {/* Barre latérale */}
       <Sidebar
         buttons={buttons}
         onButtonClick={handleButtonClick}
         activeButton={activeButton}
-        dashboardName="التدبير المنزلي"
+        dashboardName="cleanning management"
       />
 
-      {/* عرض القسم المحدد */}
+      {/* Contenu principal */}
       <div className="main-content">
-        {activeButton === "Chambres" && (
-          <div>
-            <h2>Gestion des Chambres</h2>
-            <div>
-              <input
-                type="text"
-                name="roomNumber"
-                placeholder="Numéro de chambre"
-                value={roomFormData.roomNumber}
-                onChange={(e) => handleInputChange(e, roomFormData, setRoomFormData)}
-              />
-              <select
-                name="status"
-                value={roomFormData.status}
-                onChange={(e) => handleInputChange(e, roomFormData, setRoomFormData)}
-              >
-                <option value="à nettoyer">À nettoyer</option>
-                <option value="en maintenance">En maintenance</option>
-                <option value="nettoyée">Nettoyée</option>
-              </select>
-              <button onClick={handleAddRoom}>Ajouter Chambre</button>
-            </div>
+        <h1>Gestion du Service de Ménage</h1>
 
-            <div>
-              <h3>Liste des Chambres</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Numéro de chambre</th>
-                    <th>Statut</th>
-                    <th>Actions</th>
+        {/* Section : Tâches de Ménage */}
+        {activeButton === "Tâches de Ménage" && (
+          <section className="section">
+            <h2>Tâches de Ménage</h2>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Chambre</th>
+                  <th>Statut</th>
+                  <th>Priorité</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tasks.map((task) => (
+                  <tr key={task.id}>
+                    <td>{task.room}</td>
+                    <td>{task.status}</td>
+                    <td>{task.priority}</td>
+                    <td>
+                      <button
+                        className="button"
+                        onClick={() => updateTaskStatus(task.id, "propre")}
+                      >
+                        Marquer comme propre
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {rooms.map((room, index) => (
-                    <tr key={index}>
-                      <td>{room.roomNumber}</td>
-                      <td>
-                        <select
-                          value={room.status}
-                          onChange={(e) =>
-                            handleUpdateRoomStatus(index, e.target.value)
-                          }
+                ))}
+              </tbody>
+            </table>
+            <button
+              className="button"
+              onClick={() => addTask("104", "VIP")}
+            >
+              Ajouter une tâche
+            </button>
+            <button
+              className="button"
+              onClick={() => addInvoice("Client 1", 100)}
+            >
+              Ajouter une facture
+            </button>
+          </section>
+        )}
+
+        {/* Section : Suivi du Personnel */}
+        {activeButton === "Suivi du Personnel" && (
+          <section className="section">
+            <h2>Suivi du Personnel</h2>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Statut</th>
+                  <th>Performance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {staff.map((employee) => (
+                  <tr key={employee.id}>
+                    <td>{employee.name}</td>
+                    <td>{employee.status}</td>
+                    <td>{employee.performance}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button
+              className="button"
+              onClick={() => addEmployee("Nouvel Employé", "présent", "bon")}
+            >
+              Ajouter un employé
+            </button>
+            <button
+              className="button"
+              onClick={() => addInvoice("Client 2", 200)}
+            >
+              Ajouter une facture
+            </button>
+          </section>
+        )}
+
+        {/* Section : Gestion des Stocks */}
+        {activeButton === "Gestion des Stocks" && (
+          <section className="section">
+            <h2>Gestion des Stocks</h2>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Produit</th>
+                  <th>Quantité</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inventory.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.item}</td>
+                    <td>{item.quantity}</td>
+                    <td>
+                      {item.needsRestock && (
+                        <button
+                          className="button"
+                          onClick={() => updateInventory(item.id, item.quantity + 10)}
                         >
-                          <option value="à nettoyer">À nettoyer</option>
-                          <option value="en maintenance">En maintenance</option>
-                          <option value="nettoyée">Nettoyée</option>
-                        </select>
-                      </td>
-                      <td>
-                        <button onClick={() => handleDeleteRoom(index)}>
-                          Supprimer
+                          Commander
                         </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button
+              className="button"
+              onClick={() => addProduct("Nouveau Produit", 10, false)}
+            >
+              Ajouter un produit
+            </button>
+            <button
+              className="button"
+              onClick={() => addInvoice("Client 3", 300)}
+            >
+              Ajouter une facture
+            </button>
+          </section>
         )}
 
-        {activeButton === "Notifications" && (
-          <div>
-            <h2>Gestion des Notifications</h2>
-            <div>
-              <input
-                type="text"
-                name="message"
-                placeholder="Message"
-                value={notificationFormData.message}
-                onChange={(e) => handleInputChange(e, notificationFormData, setNotificationFormData)}
-              />
-              <select
-                name="priority"
-                value={notificationFormData.priority}
-                onChange={(e) => handleInputChange(e, notificationFormData, setNotificationFormData)}
-              >
-                <option value="normal">Normal</option>
-                <option value="urgent">Urgent</option>
-              </select>
-              <button onClick={handleAddNotification}>Ajouter Notification</button>
-            </div>
-
-            <div>
-              <h3>Liste des Notifications</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Message</th>
-                    <th>Priorité</th>
-                    <th>Actions</th>
+        {/* Section : Demandes Spéciales */}
+        {activeButton === "Demandes Spéciales" && (
+          <section className="section">
+            <h2>Demandes Spéciales</h2>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Chambre</th>
+                  <th>Demande</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {specialRequests.map((request) => (
+                  <tr key={request.id}>
+                    <td>{request.room}</td>
+                    <td>{request.request}</td>
+                    <td>{request.status}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {notifications.map((notification, index) => (
-                    <tr key={index}>
-                      <td>{notification.message}</td>
-                      <td>{notification.priority}</td>
-                      <td>
-                        <button onClick={() => handleDeleteNotification(index)}>
-                          Supprimer
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                ))}
+              </tbody>
+            </table>
+            <button
+              className="button"
+              onClick={() => addSpecialRequest("105", "Nettoyage urgent")}
+            >
+              Ajouter une demande
+            </button>
+            <button
+              className="button"
+              onClick={() => addInvoice("Client 4", 400)}
+            >
+              Ajouter une facture
+            </button>
+          </section>
         )}
 
-        {activeButton === "Produits" && (
-          <div>
-            <h2>Gestion des Produits</h2>
-            <div>
-              <input
-                type="text"
-                name="productName"
-                placeholder="Nom du produit"
-                value={productFormData.productName}
-                onChange={(e) => handleInputChange(e, productFormData, setProductFormData)}
-              />
-              <input
-                type="number"
-                name="quantity"
-                placeholder="Quantité"
-                value={productFormData.quantity}
-                onChange={(e) => handleInputChange(e, productFormData, setProductFormData)}
-              />
-              <button onClick={handleAddProduct}>Ajouter Produit</button>
-            </div>
-
-            <div>
-              <h3>Liste des Produits</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Nom du produit</th>
-                    <th>Quantité</th>
-                    <th>Actions</th>
+        {/* Section : Contrôle Qualité */}
+        {activeButton === "Contrôle Qualité" && (
+          <section className="section">
+            <h2>Contrôle Qualité</h2>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Chambre</th>
+                  <th>Statut</th>
+                  <th>Problèmes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {qualityChecks.map((check) => (
+                  <tr key={check.id}>
+                    <td>{check.room}</td>
+                    <td>{check.status}</td>
+                    <td>{check.issues}</td>
+                    <td>
+                      <button
+                        className="button"
+                        onClick={() => updateQualityCheck(check.id, "passé", "Aucun")}
+                      >
+                        Marquer comme vérifié
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {products.map((product, index) => (
-                    <tr key={index}>
-                      <td>{product.productName}</td>
-                      <td>{product.quantity}</td>
-                      <td>
-                        <button onClick={() => handleDeleteProduct(index)}>
-                          Supprimer
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {activeButton === "Coordination" && (
-          <div>
-            <h2>Coordination avec la Réception</h2>
-            <div>
-              <h3>Liste des Chambres à Coordonner</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Numéro de chambre</th>
-                    <th>Statut</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rooms.map((room, index) => (
-                    <tr key={index}>
-                      <td>{room.roomNumber}</td>
-                      <td>{room.status}</td>
-                      <td>
-                        <button onClick={() => alert(`Coordination pour la chambre ${room.roomNumber}`)}>
-                          Coordonner
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                ))}
+              </tbody>
+            </table>
+            <button
+              className="button"
+              onClick={() => addAudit("Audit de qualité", "en cours")}
+            >
+              Ajouter un audit
+            </button>
+            <button
+              className="button"
+              onClick={() => addInvoice("Client 5", 500)}
+            >
+              Ajouter une facture
+            </button>
+          </section>
         )}
       </div>
     </div>
