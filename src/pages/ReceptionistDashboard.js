@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route, useNavigate, Link } from "react-router-dom";
+import { Routes, Route, useNavigate,  } from "react-router-dom";
 import { FaCheckCircle, FaPlus, FaSignOutAlt } from "react-icons/fa";
 import profilereceptioniste from "../assets/profilereceptioniste.webp"; // Assurez-vous que le chemin est correct
 import "../Style/commonStyles.css"; // Importez les styles communs
@@ -264,16 +264,6 @@ const CreateReservation = () => {
   );
 };
 
-// Composant NotFoundPage
-const NotFoundPage = () => {
-  return (
-    <div className="container not-found-page">
-      <h1>404 - Page Non Trouvée</h1>
-      <p>La page que vous recherchez n'existe pas.</p>
-      <Link to="/receptionist" className="btn">Retour à l'accueil</Link>
-    </div>
-  );
-};
 
 // Composant ReceptionistDashboard
 const ReceptionistDashboard = () => {
@@ -321,7 +311,7 @@ const ReceptionistDashboard = () => {
         
           <Route path="/authenticate" element={<AuthenticateReservation />} />
           <Route path="/create-reservation" element={<CreateReservation />} />
-          <Route path="*" element={<NotFoundPage />} />
+        
         </Routes>
       </div>
 
