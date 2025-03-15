@@ -1,362 +1,363 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Importer useNavigate
 import Sidebar from "../components/Sidebar";
-import "../Style/commonStyles.css"; // Assurez-vous d'importer globalStyles.css
+import { FaTasks, FaClipboardList, FaShoppingCart, FaUserCheck, FaCheck, FaPlus } from "react-icons/fa";
+import profilefemmenage from "../assets/profilefemmemenage.webp"; // Assurez-vous que le chemin est correct
+
+const styles = {
+  container: {
+    padding: "20px",
+    maxWidth: "1200px",
+    margin: "0 auto",
+    fontFamily: "Arial, sans-serif",
+  },
+  heading: {
+    color: "#333",
+  },
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    marginBottom: "20px",
+  },
+  th: {
+    padding: "10px",
+    border: "1px solid #ddd",
+    textAlign: "left",
+    backgroundColor: "#f4f4f4",
+  },
+  td: {
+    padding: "10px",
+    border: "1px solid #ddd",
+    textAlign: "left",
+  },
+  button: {
+    padding: "5px 10px",
+    backgroundColor: "#007bff",
+    color: "white",
+    border: "none",
+    borderRadius: "3px",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "5px",
+  },
+  buttonHover: {
+    backgroundColor: "#0056b3",
+  },
+  section: {
+    marginBottom: "40px",
+  },
+  form: {
+    marginBottom: "20px",
+  },
+  input: {
+    padding: "8px",
+    marginRight: "10px",
+    border: "1px solid #ddd",
+    borderRadius: "3px",
+  },
+  successMessage: {
+    color: "green",
+    marginTop: "10px",
+  },
+};
 
 const HousekeepingDashboard = () => {
-  // État pour gérer le bouton actif dans la barre latérale
+  const navigate = useNavigate(); // Initialiser useNavigate
   const [activeButton, setActiveButton] = useState("Tâches de Ménage");
-
-  // États pour les données
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [tasks, setTasks] = useState([
-    { id: 1, room: "101", status: "à nettoyer", priority: "normal" },
-    { id: 2, room: "102", status: "en cours de nettoyage", priority: "VIP" },
-    { id: 3, room: "103", status: "propre", priority: "normal" },
+    { id: 1, room: "101", status: "à nettoyer" },
+    { id: 2, room: "102", status: "en maintenance" },
+    { id: 3, room: "103", status: "utilisé" },
   ]);
-
-  const [staff, setStaff] = useState([
-    { id: 1, name: "Jean Dupont", status: "présent", performance: "excellent" },
-    { id: 2, name: "Marie Curie", status: "absent", performance: "bon" },
-  ]);
-
-  const [inventory, setInventory] = useState([
-    { id: 1, item: "Serviettes", quantity: 50, needsRestock: false },
-    { id: 2, item: "Détergent", quantity: 10, needsRestock: true },
-  ]);
-
   const [specialRequests, setSpecialRequests] = useState([
     { id: 1, room: "101", request: "Nettoyage urgent", status: "en attente" },
   ]);
-
-  const [qualityChecks, setQualityChecks] = useState([
-    { id: 1, room: "101", status: "passé", issues: "Aucun" },
-    { id: 2, room: "102", status: "en attente", issues: "À vérifier" },
+  const [inventoryOrders, setInventoryOrders] = useState([]);
+  const [staff, setStaff] = useState([
+    { id: 1, name: "Jean Dupont", status: "présent", performance: 8 },
+    { id: 2, name: "Marie Curie", status: "absent", performance: 7 },
   ]);
+  const [newTask, setNewTask] = useState({ room: "", status: "" });
+  const [newRequest, setNewRequest] = useState({ room: "", request: "" });
+  const [newOrder, setNewOrder] = useState({ product: "", quantity: "" });
+  const [newEmployee, setNewEmployee] = useState({ name: "", status: "", performance: "" });
 
-  const [invoices, setInvoices] = useState([]);
-  const [audits, setAudits] = useState([]);
-
-  // Fonctions pour mettre à jour les données
   const updateTaskStatus = (taskId, newStatus) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, status: newStatus } : task
-      )
-    );
+    setTasks(tasks.map(task => task.id === taskId ? { ...task, status: newStatus } : task));
   };
 
-  const addTask = (room, priority) => {
-    const newTask = {
-      id: tasks.length + 1,
-      room,
-      status: "à nettoyer",
-      priority,
-    };
-    setTasks([...tasks, newTask]);
+  const addTask = () => {
+    if (newTask.room && newTask.status) {
+      const newTaskEntry = {
+        id: tasks.length + 1,
+        room: newTask.room,
+        status: newTask.status,
+      };
+      setTasks([...tasks, newTaskEntry]);
+      setNewTask({ room: "", status: "" });
+    } else {
+      alert("Veuillez remplir tous les champs.");
+    }
   };
 
-  const updateInventory = (itemId, newQuantity) => {
-    setInventory(
-      inventory.map((item) =>
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
-      )
-    );
+  const addSpecialRequest = () => {
+    if (newRequest.room && newRequest.request) {
+      const newRequestEntry = {
+        id: specialRequests.length + 1,
+        room: newRequest.room,
+        request: newRequest.request,
+        status: "en attente",
+      };
+      setSpecialRequests([...specialRequests, newRequestEntry]);
+      setNewRequest({ room: "", request: "" });
+    } else {
+      alert("Veuillez remplir tous les champs.");
+    }
   };
 
-  const addSpecialRequest = (room, request) => {
-    const newRequest = {
-      id: specialRequests.length + 1,
-      room,
-      request,
-      status: "en attente",
-    };
-    setSpecialRequests([...specialRequests, newRequest]);
+  const addInventoryOrder = () => {
+    if (newOrder.product && newOrder.quantity) {
+      const newOrderEntry = {
+        id: inventoryOrders.length + 1,
+        product: newOrder.product,
+        quantity: newOrder.quantity,
+        date: new Date().toISOString().split('T')[0],
+      };
+      setInventoryOrders([...inventoryOrders, newOrderEntry]);
+      setNewOrder({ product: "", quantity: "" });
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 3000);
+    } else {
+      alert("Veuillez remplir tous les champs.");
+    }
   };
 
-  const updateQualityCheck = (checkId, newStatus, issues) => {
-    setQualityChecks(
-      qualityChecks.map((check) =>
-        check.id === checkId ? { ...check, status: newStatus, issues } : check
-      )
-    );
+  const addEmployee = () => {
+    if (newEmployee.name && newEmployee.status && newEmployee.performance) {
+      const newEmployeeEntry = {
+        id: staff.length + 1,
+        name: newEmployee.name,
+        status: newEmployee.status,
+        performance: parseFloat(newEmployee.performance),
+      };
+      setStaff([...staff, newEmployeeEntry]);
+      setNewEmployee({ name: "", status: "", performance: "" });
+    } else {
+      alert("Veuillez remplir tous les champs.");
+    }
   };
 
-  const addInvoice = (clientName, amount) => {
-    const newInvoice = {
-      id: invoices.length + 1,
-      clientName,
-      amount,
-      date: new Date().toLocaleDateString(),
-    };
-    setInvoices([...invoices, newInvoice]);
-  };
-
-  const addAudit = (description, status) => {
-    const newAudit = {
-      id: audits.length + 1,
-      description,
-      status,
-      date: new Date().toLocaleDateString(),
-    };
-    setAudits([...audits, newAudit]);
-  };
-
-  const addEmployee = (name, status, performance) => {
-    const newEmployee = {
-      id: staff.length + 1,
-      name,
-      status,
-      performance,
-    };
-    setStaff([...staff, newEmployee]);
-  };
-
-  const addProduct = (item, quantity, needsRestock) => {
-    const newProduct = {
-      id: inventory.length + 1,
-      item,
-      quantity,
-      needsRestock,
-    };
-    setInventory([...inventory, newProduct]);
-  };
-
-  // Boutons disponibles dans la barre latérale
   const buttons = [
-    "Tâches de Ménage",
-    "Suivi du Personnel",
-    "Gestion des Stocks",
-    "Demandes Spéciales",
-    "Contrôle Qualité",
+    { name: "Tâches de Ménage", icon: <FaTasks /> },
+    { name: "Demandes Spéciales", icon: <FaClipboardList /> },
+    { name: "Commande des Produits", icon: <FaShoppingCart /> },
+    { name: "Suivi du Personnel", icon: <FaUserCheck /> },
   ];
 
-  // Fonction pour gérer le clic sur un bouton
-  const handleButtonClick = (button) => {
-    setActiveButton(button);
+  const handleLogout = () => {
+    alert("Déconnexion réussie !");
+    navigate("/"); // Rediriger vers la page d'accueil
   };
 
   return (
-    <div className="container">
-      {/* Barre latérale */}
+    <div style={styles.container}>
       <Sidebar
         buttons={buttons}
-        onButtonClick={handleButtonClick}
+        onButtonClick={setActiveButton}
         activeButton={activeButton}
-        dashboardName="cleanning management"
+        onLogout={handleLogout}
+        dashboardName="Gestion du Ménage"
+        profileImage={profilefemmenage}
       />
-
-      {/* Contenu principal */}
       <div className="main-content">
-        <h1>Gestion du Service de Ménage</h1>
-
-        {/* Section : Tâches de Ménage */}
         {activeButton === "Tâches de Ménage" && (
-          <section className="section">
-            <h2>Tâches de Ménage</h2>
-            <table className="table">
+          <section style={styles.section}>
+            <h2 style={styles.heading}>Tâches de Ménage</h2>
+            <table style={styles.table}>
               <thead>
                 <tr>
-                  <th>Chambre</th>
-                  <th>Statut</th>
-                  <th>Priorité</th>
-                  <th>Actions</th>
+                  <th style={styles.th}>ID de la chambre</th>
+                  <th style={styles.th}>Statut</th>
+                  <th style={styles.th}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {tasks.map((task) => (
                   <tr key={task.id}>
-                    <td>{task.room}</td>
-                    <td>{task.status}</td>
-                    <td>{task.priority}</td>
-                    <td>
-                      <button
-                        className="button"
-                        onClick={() => updateTaskStatus(task.id, "propre")}
-                      >
-                        Marquer comme propre
+                    <td style={styles.td}>{task.room}</td>
+                    <td style={styles.td}>{task.status}</td>
+                    <td style={styles.td}>
+                      <button style={styles.button} onClick={() => updateTaskStatus(task.id, "propre")}>
+                        <FaCheck /> Marquer comme propre
                       </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <button
-              className="button"
-              onClick={() => addTask("104", "VIP")}
-            >
-              Ajouter une tâche
-            </button>
-            <button
-              className="button"
-              onClick={() => addInvoice("Client 1", 100)}
-            >
-              Ajouter une facture
-            </button>
+            <div style={styles.form}>
+              <input
+                type="text"
+                placeholder="ID de la chambre"
+                value={newTask.room}
+                onChange={(e) => setNewTask({ ...newTask, room: e.target.value })}
+                style={styles.input}
+              />
+              <select
+                value={newTask.status}
+                onChange={(e) => setNewTask({ ...newTask, status: e.target.value })}
+                style={styles.input}
+              >
+                <option value="">Choisir un statut</option>
+                <option value="à nettoyer">À nettoyer</option>
+                <option value="en maintenance">En maintenance</option>
+                <option value="utilisé">Utilisé</option>
+              </select>
+              <button style={styles.button} onClick={addTask}>
+                <FaPlus /> Ajouter une tâche
+              </button>
+            </div>
           </section>
         )}
 
-        {/* Section : Suivi du Personnel */}
-        {activeButton === "Suivi du Personnel" && (
-          <section className="section">
-            <h2>Suivi du Personnel</h2>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Nom</th>
-                  <th>Statut</th>
-                  <th>Performance</th>
-                </tr>
-              </thead>
-              <tbody>
-                {staff.map((employee) => (
-                  <tr key={employee.id}>
-                    <td>{employee.name}</td>
-                    <td>{employee.status}</td>
-                    <td>{employee.performance}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button
-              className="button"
-              onClick={() => addEmployee("Nouvel Employé", "présent", "bon")}
-            >
-              Ajouter un employé
-            </button>
-            <button
-              className="button"
-              onClick={() => addInvoice("Client 2", 200)}
-            >
-              Ajouter une facture
-            </button>
-          </section>
-        )}
-
-        {/* Section : Gestion des Stocks */}
-        {activeButton === "Gestion des Stocks" && (
-          <section className="section">
-            <h2>Gestion des Stocks</h2>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Produit</th>
-                  <th>Quantité</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {inventory.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.item}</td>
-                    <td>{item.quantity}</td>
-                    <td>
-                      {item.needsRestock && (
-                        <button
-                          className="button"
-                          onClick={() => updateInventory(item.id, item.quantity + 10)}
-                        >
-                          Commander
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button
-              className="button"
-              onClick={() => addProduct("Nouveau Produit", 10, false)}
-            >
-              Ajouter un produit
-            </button>
-            <button
-              className="button"
-              onClick={() => addInvoice("Client 3", 300)}
-            >
-              Ajouter une facture
-            </button>
-          </section>
-        )}
-
-        {/* Section : Demandes Spéciales */}
         {activeButton === "Demandes Spéciales" && (
-          <section className="section">
-            <h2>Demandes Spéciales</h2>
-            <table className="table">
+          <section style={styles.section}>
+            <h2 style={styles.heading}>Demandes Spéciales</h2>
+            <table style={styles.table}>
               <thead>
                 <tr>
-                  <th>Chambre</th>
-                  <th>Demande</th>
-                  <th>Statut</th>
+                  <th style={styles.th}>ID de la chambre</th>
+                  <th style={styles.th}>Demande</th>
+                  <th style={styles.th}>Statut</th>
                 </tr>
               </thead>
               <tbody>
                 {specialRequests.map((request) => (
                   <tr key={request.id}>
-                    <td>{request.room}</td>
-                    <td>{request.request}</td>
-                    <td>{request.status}</td>
+                    <td style={styles.td}>{request.room}</td>
+                    <td style={styles.td}>{request.request}</td>
+                    <td style={styles.td}>{request.status}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <button
-              className="button"
-              onClick={() => addSpecialRequest("105", "Nettoyage urgent")}
-            >
-              Ajouter une demande
-            </button>
-            <button
-              className="button"
-              onClick={() => addInvoice("Client 4", 400)}
-            >
-              Ajouter une facture
-            </button>
+            <div style={styles.form}>
+              <input
+                type="text"
+                placeholder="ID de la chambre"
+                value={newRequest.room}
+                onChange={(e) => setNewRequest({ ...newRequest, room: e.target.value })}
+                style={styles.input}
+              />
+              <input
+                type="text"
+                placeholder="Demande"
+                value={newRequest.request}
+                onChange={(e) => setNewRequest({ ...newRequest, request: e.target.value })}
+                style={styles.input}
+              />
+              <button style={styles.button} onClick={addSpecialRequest}>
+                <FaPlus /> Ajouter une demande
+              </button>
+            </div>
           </section>
         )}
 
-        {/* Section : Contrôle Qualité */}
-        {activeButton === "Contrôle Qualité" && (
-          <section className="section">
-            <h2>Contrôle Qualité</h2>
-            <table className="table">
+        {activeButton === "Commande des Produits" && (
+          <section style={styles.section}>
+            <h2 style={styles.heading}>Commande des Produits</h2>
+            {showSuccessMessage && <p style={styles.successMessage}>Commande envoyée avec succès !</p>}
+            <table style={styles.table}>
               <thead>
                 <tr>
-                  <th>Chambre</th>
-                  <th>Statut</th>
-                  <th>Problèmes</th>
-                  <th>Actions</th>
+                  <th style={styles.th}>Produit</th>
+                  <th style={styles.th}>Quantité</th>
+                  <th style={styles.th}>Date</th>
                 </tr>
               </thead>
               <tbody>
-                {qualityChecks.map((check) => (
-                  <tr key={check.id}>
-                    <td>{check.room}</td>
-                    <td>{check.status}</td>
-                    <td>{check.issues}</td>
-                    <td>
-                      <button
-                        className="button"
-                        onClick={() => updateQualityCheck(check.id, "passé", "Aucun")}
-                      >
-                        Marquer comme vérifié
-                      </button>
-                    </td>
+                {inventoryOrders.map((order) => (
+                  <tr key={order.id}>
+                    <td style={styles.td}>{order.product}</td>
+                    <td style={styles.td}>{order.quantity}</td>
+                    <td style={styles.td}>{order.date}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <button
-              className="button"
-              onClick={() => addAudit("Audit de qualité", "en cours")}
-            >
-              Ajouter un audit
-            </button>
-            <button
-              className="button"
-              onClick={() => addInvoice("Client 5", 500)}
-            >
-              Ajouter une facture
-            </button>
+            <div style={styles.form}>
+              <input
+                type="text"
+                placeholder="Nom du produit"
+                value={newOrder.product}
+                onChange={(e) => setNewOrder({ ...newOrder, product: e.target.value })}
+                style={styles.input}
+              />
+              <input
+                type="number"
+                placeholder="Quantité"
+                value={newOrder.quantity}
+                onChange={(e) => setNewOrder({ ...newOrder, quantity: e.target.value })}
+                style={styles.input}
+              />
+              <button style={styles.button} onClick={addInventoryOrder}>
+                <FaPlus /> Envoyer la commande
+              </button>
+            </div>
+          </section>
+        )}
+
+        {activeButton === "Suivi du Personnel" && (
+          <section style={styles.section}>
+            <h2 style={styles.heading}>Suivi du Personnel</h2>
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                  <th style={styles.th}>Nom</th>
+                  <th style={styles.th}>Statut</th>
+                  <th style={styles.th}>Performance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {staff.map((employee) => (
+                  <tr key={employee.id}>
+                    <td style={styles.td}>{employee.name}</td>
+                    <td style={styles.td}>{employee.status}</td>
+                    <td style={styles.td}>{employee.performance}/10</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div style={styles.form}>
+              <input
+                type="text"
+                placeholder="Nom de l'employé"
+                value={newEmployee.name}
+                onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })}
+                style={styles.input}
+              />
+              <select
+                value={newEmployee.status}
+                onChange={(e) => setNewEmployee({ ...newEmployee, status: e.target.value })}
+                style={styles.input}
+              >
+                <option value="">Choisir un statut</option>
+                <option value="présent">Présent</option>
+                <option value="absent">Absent</option>
+              </select>
+              <input
+                type="number"
+                placeholder="Performance/10"
+                value={newEmployee.performance}
+                onChange={(e) => setNewEmployee({ ...newEmployee, performance: e.target.value })}
+                style={styles.input}
+              />
+              <button style={styles.button} onClick={addEmployee}>
+                <FaPlus /> Ajouter un employé
+              </button>
+            </div>
           </section>
         )}
       </div>

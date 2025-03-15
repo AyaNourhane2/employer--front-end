@@ -16,7 +16,7 @@
 }
 
 /* Styles de base pour la barre de navigation */
-nav {
+.sidebar {
   display: flex;
   flex-direction: column;
   width: var(--navbar-width);
@@ -34,17 +34,16 @@ nav {
   margin-right: 20px; /* Espace entre la Navbar et le contenu */
 }
 
-/* Styles pour la barre de navigation réduite */
-nav.collapsed {
+.sidebar.closed {
   width: var(--navbar-collapsed-width);
   padding: 30px 12px;
 }
 
 /* Bouton de bascule pour replier/déplier la barre */
-.toggle-button {
-  position: absolute;
-  right: -50px;
+.sidebar-toggle {
+  position: fixed;
   top: 20px;
+  left: 20px;
   background-color: var(--navbar-background);
   color: var(--navbar-text-color);
   border: 1px solid var(--navbar-border-color);
@@ -53,9 +52,10 @@ nav.collapsed {
   border-radius: 50%;
   box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.2);
   transition: all var(--transition-speed) ease;
+  z-index: 1000;
 }
 
-.toggle-button:hover {
+.sidebar-toggle:hover {
   background-color: var(--navbar-button-hover-bg);
   color: var(--navbar-text-hover-color);
   transform: scale(1.2);
@@ -78,46 +78,36 @@ nav.collapsed {
 }
 
 /* Styles pour les boutons de navigation */
-nav button {
-  background-color: var(--navbar-button-bg);
-  color: var(--navbar-text-color);
-  border: none;
-  padding: 14px 20px;
-  margin: 10px 0;
-  text-align: left;
-  cursor: pointer;
-  border-radius: var(--border-radius);
-  font-size: 16px;
-  font-weight: 500;
-  transition: all var(--transition-speed) ease;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px; /* Espace entre le titre et les boutons */
 }
 
-/* Effet de survol pour les boutons */
-nav button:hover {
+.sidebar nav ul li {
+  margin-bottom: 15px; /* Espace entre les boutons */
+}
+
+.sidebar nav ul li a {
+  text-decoration: none;
+  color: var(--navbar-text-color);
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: var(--border-radius);
+  transition: all var(--transition-speed) ease;
+}
+
+.sidebar nav ul li a:hover {
   background-color: var(--navbar-button-hover-bg);
   color: var(--navbar-text-hover-color);
   transform: translateX(8px);
 }
 
-/* Styles pour le bouton actif */
-nav button.active {
-  background-color: rgba(147, 197, 253, 0.2);
+.sidebar nav ul li.active a {
+  background-color: rgba(147, 197, 253, 0.4); /* Bleu clair avec plus d'opacité */
   color: var(--navbar-text-hover-color);
   transform: translateX(8px);
-}
-
-/* Transition pour le texte lors du repli */
-nav.collapsed button span {
-  opacity: 0;
-  transition: opacity var(--transition-speed) ease;
-}
-
-nav button span {
-  opacity: 1;
-  transition: opacity var(--transition-speed) ease;
 }
 
 /* Styles pour la section du profil */
@@ -137,20 +127,9 @@ nav button span {
 }
 
 /* Styles pour le titre de la barre latérale */
-nav h1 {
+.sidebar h1 {
   font-size: 1.5rem;
   margin-bottom: 20px;
   text-align: center;
   color: var(--navbar-text-color);
-}
-
-/* Espacement entre les boutons */
-nav ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 20px; /* Espace entre le titre et les boutons */
-}
-
-nav ul li {
-  margin-bottom: 10px; /* Espace entre les boutons */
 }

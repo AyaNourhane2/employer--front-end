@@ -40,7 +40,7 @@ body {
 /* Contenu principal */
 .main-content {
   flex: 1;
-  padding: 95px;
+  padding: 400px;
   background-color: white;
   margin-left: var(--navbar-width);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -161,7 +161,7 @@ button:hover {
   width: var(--navbar-width);
   background: var(--navbar-background);
   backdrop-filter: var(--glass-blur);
-  padding: 30px;
+  padding: 10px;
   height: 100vh;
   position: fixed;
   left: 0;
@@ -237,4 +237,23 @@ button:hover {
   background-color: var(--navbar-button-hover-bg);
   color: var(--navbar-text-hover-color);
   transform: scale(1.2);
+}
+
+.btn {
+  padding: 10px 20px;
+  background-color: var(--button-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px;
+  transition: background-color var(--transition-speed) ease;
+}
+
+.btn:hover {
+  background-color: var(--button-hover-color);
 }
