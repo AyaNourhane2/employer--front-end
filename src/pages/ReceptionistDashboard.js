@@ -48,19 +48,6 @@ const Sidebar = ({ buttons, onButtonClick, activeButton, onLogout, dashboardName
   );
 };
 
-// Composant HomePage
-const HomePage = () => {
-  return (
-    <div className="container home-page">
-      <h1>Bienvenue à l'Hôtel</h1>
-      <p>Gérez vos réservations en toute simplicité.</p>
-      <div className="home-buttons">
-        <Link to="/receptionist/authenticate" className="btn">Authentifier une Réservation</Link>
-        <Link to="/receptionist/create-reservation" className="btn">Créer une Réservation</Link>
-      </div>
-    </div>
-  );
-};
 
 // Composant AuthenticateReservation
 const AuthenticateReservation = () => {
@@ -331,7 +318,7 @@ const ReceptionistDashboard = () => {
       {/* Contenu principal */}
       <div className="main-content">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+        
           <Route path="/authenticate" element={<AuthenticateReservation />} />
           <Route path="/create-reservation" element={<CreateReservation />} />
           <Route path="*" element={<NotFoundPage />} />
